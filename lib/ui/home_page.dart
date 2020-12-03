@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:contatos_flutter/ui/contact_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum OrderOption {orderaz, orderza};
+enum OrderOption {orderaz, orderza}
 
 class HomePage extends StatefulWidget {
   @override
@@ -39,6 +39,22 @@ class _HomePageState extends State<HomePage> {
         title: Text("Contatos"),
         backgroundColor: Colors.red,
         centerTitle: true,
+        actions: [
+          PopupMenuButton<OrderOption>(
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (context) => <PopupMenuEntry<OrderOption>>[
+              const PopupMenuItem<OrderOption>(
+                child: Text("Ordernar de A-Z"),
+                value: OrderOption.orderaz,
+              ),
+              const PopupMenuItem<OrderOption>(
+                child: Text("Ordernar de Z-A"),
+                value: OrderOption.orderza,
+              ),
+            ],
+            onSelected: _orderList,
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
@@ -58,6 +74,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _orderList (OrderOption result){
+    switch(result){
+      case OrderOption.orderaz:
+        contacts.sort((a,b){
+          return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        });
+        break;
+      case OrderOption.orderza:
+        contacts.sort((a,b){
+          return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+        });
+        break;
+    }
+    setState(() {
+
+    });
+  }
+
   Widget _contactCard(BuildContext context, int index){
     return GestureDetector(
       onTap: (){
@@ -74,6 +108,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
+                    fit: BoxFit.cover,
                     image: contacts[index].img != null ? FileImage(File(contacts[index].img)) : AssetImage("images/person.png")
                   )
                 ),
